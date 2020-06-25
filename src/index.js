@@ -3,10 +3,14 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 export default class ScrollText extends React.Component {
+
   static propTypes = {
     speed: PropTypes.number,
-    children: PropTypes.string.isRequired
+    children: PropTypes.string.isRequired,
+    mode: PropTypes.oneOf(['scroll', 'pingpong']),
+    infinite: PropTypes.boolean
   }
+
   static defaultProps = {
     speed: 100
   }
@@ -48,6 +52,11 @@ export default class ScrollText extends React.Component {
       duration
     } = this.state
 
+    const {
+      mode,
+      infinite
+    } = this.props;
+
     const Container = styled.div`
       overflow: hidden;
       word-break: keep-all;
@@ -56,8 +65,8 @@ export default class ScrollText extends React.Component {
     `
 
     const ScrollText = styled.div`
-      animation: ${scrollWidth > clientWidth ? `scroll ${duration}s linear infinite` : 'none'};
-      animation-fill-mode: forwards;
+      animation: ${scrollWidth > clientWidth ? `${mode} ${duration}s linear ${infinite ? 'infinite' : ''}` : 'none'};
+      animation-fill-mode: ${inifine ? 'forwards' : 'both'};
 
       @keyframes scroll {
           0% {
@@ -67,6 +76,19 @@ export default class ScrollText extends React.Component {
               transform: translateX(-${scrollWidth}px);
           }
       }
+
+      @keyframes pingpong {
+        0% {
+            transform: translateX(${clientWidth}px);
+        }
+
+        50% {
+            transform: translateX(-${scrollWidth}px);
+        }
+        100% {
+            transform: translateX(${scrollWidth}px);
+        }
+    }
   `
 
     return (
